@@ -98,6 +98,7 @@ def format_for_storage(phone):
 def load_files():
     files_to_load = {
         "digital_ambassador_pdf": "./responses/Designation of Tech-Native.pdf",
+        "DBS_backoffice_updated_form_pdf":"./responses/DBS backoffice updated form 20022026.pdf",
         "digital_access_steps_video": "./responses/Digital Access Steps.mp4",
         "blocked_customer_video": "./responses/videos/Unlocking and Unblocking customer.mp4",
         "Approve_of_Digital_Access_on_CBS_video": "./responses/videos/Approval of Digital Access on CBS (Manual Review).mp4",
@@ -429,7 +430,13 @@ async def handle_message(update: Update, context: ContextTypes.DEFAULT_TYPE):
         
         # If already in private chat, show the menu normally
         await update.message.reply_text(
-            "📋 **Reported And Fixed Issues Searching Menu**",
+            "📋 *Reported And Fixed Issues Searching Menu*\n\n"
+            "⚠️ *Warning:* To check if your a report is resolved, you *MUST*:\n"
+            "1. Ensure you selected the *Correct Issue Type*.\n"
+            "2. Search using the *Phone Number* you have previously reported.\n\n"
+            "⚠️ *ማስጠንቀቂያ:* ሪፖርትዎ መፍትሄ ማግኘቱን ለማረጋገጥ:\n"
+            "1. ሪፖርት ያደረጉትን ትክክለኛ የችግር አይነት መምረጥዎን ያረጋግጡ።\n"
+            "2. ከዚህ ቀደም ሪፖርት ያደረጉትን *ስልክ ቁጥር* በመጠቀም ይፈልጉ።\n",
             reply_markup=get_reported_and_fixed_issues_menu(),
             parse_mode="Markdown"
         )
@@ -523,9 +530,14 @@ async def handle_message(update: Update, context: ContextTypes.DEFAULT_TYPE):
         found_data = search_phone_in_reports(user_message, category)
         
         if found_data:
-            text = f"✅ **Record Found:**\n\n"
-            for item in found_data:
-                text += f"📱 **Phone:** 0{target}\n🚩 **Status:** {item['status']}\n\n"
+        # We only take the first record [0] to avoid duplicates
+            item = found_data[0] 
+            text = (
+                f"✅ **Record Found:**\n\n"
+                f"📱 **Phone:** 0{target}\n"
+                f"🚩 **Status:** {item['status']}\n\n"
+            )
+
         else:
             text = f"❌ No record found for `{user_message}`."
 
@@ -644,14 +656,10 @@ Video Tutorial: https://t.me/anbesaplus/2252
 
     # Digital Access Approval on CBS (Manual Review)
     elif user_message == "Digital Access Approval on CBS (Manual Review)":
-        caption = """Steps for Digital Access Approval on CBS (Manual Review)
+        caption = """Check the Video for Steps of Digital Access Approval on CBS (Manual Review)
 """
         await send_cached_file(update, "Approve_of_Digital_Access_on_CBS_video", caption=caption,parse_mode="Markdown")
-        response_text = "Check the Video above."
-        await update.message.reply_text(
-            response_text,
-            reply_markup=get_main_keyboard()
-        )
+
         return
 
     # Overlay Detected Avoid Entering Sensetive Information Error
@@ -819,60 +827,86 @@ Steps to Download TestFlight and Install Anbesa Plus.
     
         # DBS Back Office / Portal User Access Request Form
     elif user_message == "DBS Back Office / Portal User Access Request Form":
-        response = """Get DBS Back Office / Portal User Access Request Form:
-    https://t.me/anbesaplus/3646 """
-        
-        await update.message.reply_text(
-            response,
-            reply_markup=get_main_keyboard()
-        )
+        caption = """Get DBS Back Office / Portal User Access Request Form:
+
+When submitting a ticket in Help Desk, please select the help topic as ✅*Technical Support (…)*.✅
+
+Do not choose ❌*Others*❌, as such tickets are not forwarded to the appropriate place.
+
+If you are unable to submit through the Help Desk, you may send your request via Outlook to:
+
+በHelp Desk ውስጥ ትኬትዎን በሚልኩበት ጊዜ፣ እባክዎን ✅*Technical Support (…)*✅ የሚለውን ብቻ ይምረጡ።
+
+❌ሌላ አትምረጡ፣ቲኬቶች ወደ ተገቢው ቦታ እየደረሱ አይደለም።
+
+በHelp Desk በኩል መላክ ካልቻሉ ጥያቄዎን በOutlook በኩል ወደሚከተለው Email ይላኩ።
+
+- `tokumaj@anbesabank.com` and 
+
+- `fisehad@anbesabank.com`"""
+        await send_cached_file(update, "DBS_backoffice_updated_form_pdf", caption=caption,parse_mode="Markdown")
+
+        # await update.message.reply_text(
+        #     response,
+        #     parse_mode="Markdown",
+        #     reply_markup=get_main_keyboard()
+        # )
         return
     
     # Backoffice User Access Updates
     elif user_message == "Backoffice User Access Updates":
         response = """📢 Backoffice User Access Updates
-Upto this week (19/February) the remaining branches who are not granted access DBS backoffice are the following:
+Upto this week (20/February) the remaining branches who are not granted access DBS backoffice are the following:
 
-1. Adi_daero
-2. Adi Kelebes
+1. Adi Kelebes
+2. Adi_daero
 3. Adishihu
 4. Adwa
 5. Agazian
 6. Assosa
 7. Assayta
 8. Awlaelo
-9. Aynalem
-10. AyatNoah
-11. Ayat_tafo
+9. AyatNoah
+10. Ayat_tafo
+11. Aynalem
 12. Berbere_tera
 13. Beshale
 14. Bethel
 15. Boditi
 16. Bolearabsa
 17. CMC
-18. Debre Tabor
-18. Dera
-20. Edagahamus
-21. Edagakedam
-22. Edagarebue
-23. Furi
-24. Ginbgebeya
-25. Guroro
-26. Ifb Kukufto
-27. Kality
-28. Kality_gumuruk
-29. Kandearo
-20. Karakore
-31. Megenagn Athletderartu
-32. Parlama
-33. Seket
-34. Selekleka
-35. Semema
-36. Shollagebeya
-37. Teklehaimanot
-38. Tuludimtu
-39. Weyni
-40. Wolkite
+18. Debre birhan
+19. Debre Tabor
+20. Dera
+21. Edagahamus
+22. Edagakedam
+23. EDAGABERHE
+24. Edagarebue
+25. Elala
+26. Furi
+27. Ginbgebeya
+28. Guroro
+29. Habte Giorgis
+30. Ifb Kukufto
+31. Kality
+32. Kality_gumuruk
+33. Kandearo
+34. Karakore
+35. Mariam Quiha
+36. Megenagn Athletderartu
+37. MekanisaAbo
+38. Parlama
+39. Seket
+40. Selekleka
+41. Semema
+42. Semera
+43. Shollagebeya
+44. Teklehaimanot
+45. Tuludimtu
+46. Weyni
+47. Wolkite
+48. Yechila
+49. Zelazle
 
 SMS has already been sent. Those who haven’t requested access yet must request it. If you requested this week, wait for notifications — we’ll send them soon. 
 You are adviced to follow instructions. Use the request form we have shared to you. You can find it in this group or in the bot menu.
@@ -886,38 +920,37 @@ https://t.me/anbesaplus/3646
     
     # Announcements for Invalid Backoffice Requests
     elif user_message == "❗️Announcements for Invalid Backoffice Requests":
-        response = """Upto this week (18/February)
+        response = """Upto this week (20/February)
 Branches who submitted requests earlier but did not receive access:
 ቀደም ሲል ጥያቄ አቅርባችሁ እስካሁን ፈቃድ (Access) ላልተሰጣችሁ ቅርንጫፎች፣ መዘግየቱ አብዛኛውን ጊዜ የሚፈጠረው ስህተት ከሆነ አሞላል የተያያዘ ነው። በመሆኑም በድጋሚ ጥያቄ ከማቅረባችሁ በፊት የሚከተሉትን ነጥቦች አረጋግጡ::
 
 ```
- 1. Adi Mehameday            22. Keta
- 2. Adiabum                  23. Mariam Quiha
- 3. Adihaki Market           24. Maymekden
- 4. Adisalem                 25. Meda agame
- 5. Adwa                     26. MekanisaABO
- 6. Agaro                    27. MEZBIR
- 7. Ahferom                  28. Moyale
- 8. Aradagiorgis             29. Sarbet
- 9. Ardijeganu               30. sebeya
-10. Atote                   31. Seket
-11. Atsbi                   32. Semema
-12. Aweday                  33. Semera
-13. Berahle                 34. Shire Edaga
-14. Boditi                  35. suhul shire
-15. Endabaguna              36. Tana
-16. Erdiseganu              37. Warabe
-17. GojamBerenda            38. welwalo
-18. Injibara                39. Wollosefer
-19. kalamin                 40. Wuhalimat
-20. Kality                  41. Yechila
-21. Kality
+1. Adi Mehameday            21. Keta
+2. Adiabum                  22. Maymekden
+3. Adihaki Market           23. Meda agame
+4. Adisalem                 24. MEZBIR
+5. Adwa                     25. Moyale
+6. Agaro                    26. Sarbet
+7. Ahferom                  27. sebeya
+8. Aradagiorgis             28. Seket
+9. Ardijeganu               29. Semema
+10. Atote                   30. Shire Edaga
+11. Atsbi                   31. suhul shire
+12. Aweday                  32. Tana
+13. Berahle                 33. Warabe
+14. Boditi                  34. welwalo
+15. Endabaguna              35. Wollosefer
+16. Erdiseganu              36. Wuhalimat
+17. GojamBerenda            
+18. Injibara                
+19. kalamin                 
+20. Kality
 
 ```
 Common reasons for delay or rejection:
 
  1️⃣ Some requests may not be processed if not forwarded by IT Support to digital technology, If you believe your request is delayed and you have not received any response in Help Desk. 
-    please send, Branch name and ticket number to the following users: @tokeyj or @Fish\_dt
+please send, Branch name and ticket number to the following users: @tokeyj or @Fish\_dt
  
  2️⃣ Requests submitted without full name or complete user information.
 
@@ -994,7 +1027,8 @@ When a customer’s status shows *“ALREADY EXISTING PHONE NO”*, it means the
         await context.bot.send_message(
     chat_id=update.effective_chat.id, 
     text=response,parse_mode="Markdown",
-    reply_markup=get_main_keyboard()
+    reply_markup=get_main_keyboard(),
+    reply_to_message_id=update.message.message_id
 )
         return
     
